@@ -19,12 +19,7 @@ package org.jboss.aerogear.push;
 
 import org.jboss.aerogear.push.application.MobileApplicationInstance;
 import org.jboss.aerogear.push.application.PushApplication;
-import org.jboss.aerogear.push.impl.AndroidApp;
-import org.jboss.aerogear.push.impl.MobileApplicationInstanceImpl;
-import org.jboss.aerogear.push.impl.PushApplicationImpl;
-import org.jboss.aerogear.push.impl.SenderImpl;
-import org.jboss.aerogear.push.impl.UnifiedPushManagerImpl;
-import org.jboss.aerogear.push.impl.iOSApp;
+import org.jboss.aerogear.push.impl.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,9 +27,17 @@ public class UnifiedPushManagerTest {
 
     private UnifiedPushManager pushMgr;
 
+    private PushApplicationRegistry registry;
+
+    private Sender sender;
+
     @Before
     public void setup() {
-        pushMgr = new UnifiedPushManagerImpl();
+        pushMgr = new UnifiedPushManager();
+        registry = new FileSystemApplicationRegistry();
+        pushMgr.setPushApplicationRegistry(registry);
+        sender = new SenderImpl();
+        pushMgr.setSender(sender);
     }
 
     @Test
@@ -75,8 +78,6 @@ public class UnifiedPushManagerTest {
         pushMgr.registerPushApplication(pa);
 
         // send the message to all devices/mobile apps, for this Push app"
-        SenderImpl sender = new SenderImpl();
-        sender.sendMessageToApplications("Yo, dude!",
-                pushMgr.getPushApplications());
+        pushMgr.sendMessageToApplications("Yo, dude!",pushMgr.getPushApplications());
     }
 }
